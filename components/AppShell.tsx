@@ -2037,6 +2037,7 @@ export function AppShell() {
                 </button>
               )}
               {!isNarrowMobile && renderChatToolbarActions(true)}
+              {!isNarrowMobile && renderMainFileToggle(true, true)}
               <div className="pai-title-row">
                 <button
                   type="button"
