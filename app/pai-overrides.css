@@ -802,6 +802,68 @@ div:has(> .pai-process) + * .pai-model-label {
   }
 }
 
+/* A 481–640px phone has room for the secondary actions without the More
+ * menu. The narrow layout above is deliberately a two-row grid, but letting
+ * that grid auto-place a variable number of direct action buttons made them
+ * wrap into its left column -- underneath the circular sidebar control -- and
+ * gave each row a different gap. Keep this wider-phone variant as one flex
+ * row: title consumes the available middle space and every action gets the
+ * same 40px slot on the right. */
+@media (min-width: 481px) and (max-width: 640px) {
+  [data-mobile-toolbar="true"] {
+    display: flex !important;
+    margin-left: 0;
+    padding: 6px 8px 6px 0;
+    gap: 4px;
+  }
+
+  .pai-title-row {
+    order: -1;
+    flex: 1 1 auto;
+    min-width: 0;
+    /* The title follows the sidebar control in this one-row layout. Leave a
+       small breathing gap when a long name is ellipsized instead of letting
+       its first glyph touch the control's edge. */
+    padding-left: 8px;
+  }
+
+  /* Keep a consistent 40px touch target, but leave the controls visually
+     flat. Individual bordered cards made the portrait toolbar look like a
+     row of unrelated buttons rather than the single tool strip used in
+     landscape. */
+  .pai-sidebar-toggle,
+  [data-mobile-toolbar-action],
+  [data-mobile-toolbar-file] {
+    box-sizing: border-box;
+    width: 40px !important;
+    height: 40px !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+    transition: background-color 0.12s ease, color 0.12s ease;
+  }
+
+  /* Touch has no durable hover state. Give the pressed control a brief, local
+     ground instead of leaving every icon permanently boxed. */
+  .pai-sidebar-toggle:active,
+  [data-mobile-toolbar-action]:active,
+  [data-mobile-toolbar-file]:active {
+    background: var(--bg-hover) !important;
+  }
+
+  .pai-sidebar-toggle {
+    margin-left: 8px;
+  }
+
+  [data-mobile-toolbar-action],
+  [data-mobile-toolbar-file] {
+    flex: 0 0 40px !important;
+  }
+}
+
 /* --- The session panel as a dialog on a phone ---
  *
  * Upstream hangs it under the top bar at the bar's own width, which is a
