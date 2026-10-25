@@ -177,6 +177,7 @@ export function AppShell() {
   const [settingsSection, setSettingsSection] = useState<SettingsSection | null>(null);
   const [modelsRefreshKey, setModelsRefreshKey] = useState(0);
   const [projectTrust, setProjectTrust] = useState<ProjectTrustStatus | null>(null);
+  const [titleSuffix, setTitleSuffix] = useState<string | null>(null);
   const [projectTrustDialogOpen, setProjectTrustDialogOpen] = useState(false);
   const [projectTrustBusy, setProjectTrustBusy] = useState(false);
   const [projectTrustError, setProjectTrustError] = useState<string | null>(null);
@@ -1176,9 +1177,28 @@ export function AppShell() {
     }
   }, [projectTrustBusy, projectTrustCwd]);
 
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/pai-title", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (alive && d?.suffix) setTitleSuffix(String(d.suffix));
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   const activeFileTab = fileTabs.find((tab) => tab.id === activeFileTabId) ?? null;
   const activeCwdName = activeCwd ? getFileName(activeCwd) || activeCwd : null;
-  const windowTitle = activeCwdName ? `${activeCwdName} - PAI` : "PAI";
+  const windowTitle = (() => {
+  const base = "PAI";
+  const label = activeCwdName ? `${activeCwdName} - ${base}` : base;
+  // PI_WEB_TITLE_SUFFIX（由 /api/pai-title 注入，运行时可配）：
+  // 多节点同时开在浏览器里时用后缀区分节点，如 "PAI-PC"
+  return titleSuffix ? `${label}@${titleSuffix}` : label;
+})();
 
   useEffect(() => {
     const syncWindowTitle = () => {
