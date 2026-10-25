@@ -159,8 +159,10 @@ Boot-time startup on Android:
    ```
 
    It takes a wake lock (Android freezes background processes without one),
-   then starts the server headless. Edit the copied file to set your own
-   `PI_WEB_TITLE_SUFFIX`. After a reboot the server is on
+   then sources `~/.bashrc` (boot scripts run under non-interactive `sh`, so
+   API keys exported there would otherwise be missing — symptom: "No API key
+   found" / empty model list) and starts the server headless. Edit the copied
+   file to set your own `PI_WEB_TITLE_SUFFIX`. After a reboot the server is on
    `http://127.0.0.1:30141` within a minute or two.
 
 Disk note: `~/pai` with `node_modules` is ~1.7 GB; only `npm install` needs
