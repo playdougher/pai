@@ -165,6 +165,11 @@ Boot-time startup on Android:
    file to set your own `PI_WEB_TITLE_SUFFIX`. After a reboot the server is on
    `http://127.0.0.1:30141` within a minute or two.
 
+   To restart the server later, always run `sh ~/.termux/boot/pai.sh` —
+   launching `node bin/pi-web.js` by hand skips the env vars set there
+   (API keys, `PI_WEB_TITLE_SUFFIX`, ...), e.g. the tab-title suffix
+   silently disappears.
+
 Disk note: `~/pai` with `node_modules` is ~1.7 GB; only `npm install` needs
 the toolchain, updates come from Releases and replace `.next` only.
 
