@@ -132,9 +132,39 @@ once, then every update is:
 It fetches `/releases/latest`, swaps in `.next`, and restarts. Needs network
 access to github.com — set `http_proxy`/`https_proxy` if direct access is
 blocked (the script defaults to `http://192.168.10.130:7890` when unset).
-Boot-time startup on Android is a `~/.termux/boot/pai.sh` running
-`PI_WEB_NO_OPEN=1 PI_WEB_TITLE_SUFFIX=<node> node bin/pi-web.js` under
-`termux-wake-lock`.
+
+### Termux (Android) deployment
+
+One-time setup, in Termux:
+
+```sh
+pkg install nodejs clang python make git    # node-pty compiles natively
+git clone -b feat/title-suffix https://github.com/playdougher/pai.git ~/pai
+cd ~/pai && npm install                     # no build needed; artifacts come from Releases
+cp scripts/update-prebuilt.sh ~/pai/update-prebuilt.sh && chmod +x ~/pai/update-prebuilt.sh
+~/pai/update-prebuilt.sh                    # pull artifacts + first start
+```
+
+Boot-time startup on Android:
+
+1. Install the **Termux:Boot** add-on from the same source as Termux itself
+   (F-Droid/GitHub signatures differ), and open it once so the system
+   registers the boot receiver.
+2. Install the boot script:
+
+   ```sh
+   mkdir -p ~/.termux/boot
+   cp ~/pai/scripts/termux-boot.sh ~/.termux/boot/pai.sh
+   chmod +x ~/.termux/boot/pai.sh
+   ```
+
+   It takes a wake lock (Android freezes background processes without one),
+   then starts the server headless. Edit the copied file to set your own
+   `PI_WEB_TITLE_SUFFIX`. After a reboot the server is on
+   `http://127.0.0.1:30141` within a minute or two.
+
+Disk note: `~/pai` with `node_modules` is ~1.7 GB; only `npm install` needs
+the toolchain, updates come from Releases and replace `.next` only.
 
 ## Browser-tab node identification
 
