@@ -162,7 +162,10 @@ Boot-time startup on Android:
    then sources `~/.bashrc` (boot scripts run under non-interactive `sh`, so
    API keys exported there would otherwise be missing — symptom: "No API key
    found" / empty model list) and starts the server headless. Edit the copied
-   file to set your own `PI_WEB_TITLE_SUFFIX`. After a reboot the server is on
+   file to set `PI_WEB_TITLE_SUFFIX` (browser-tab suffix for multi-node
+   setups) and `PI_WEB_HOSTNAME` (bind address: default `127.0.0.1` is
+   local-only; set the device's LAN IP to reach it from other devices).
+   After a reboot the server is on
    `http://127.0.0.1:30141` within a minute or two.
 
    To restart the server later, always run `sh ~/.termux/boot/pai.sh` —
