@@ -105,6 +105,43 @@ npm run build
 npm start
 ```
 
+## Prebuilt releases (multi-node deployment)
+
+For devices that should run this build without a local toolchain (e.g. a
+phone running Termux), `scripts/push-prebuilt.sh` publishes the runtime
+artifacts (`.next`, cache excluded) as a GitHub Release asset instead of a
+commit — git history stays source-only.
+
+**Build node (this repo):**
+
+```sh
+./scripts/push-prebuilt.sh
+```
+
+Builds, uploads `pai-next.tar.gz` to a new Release (`prebuilt-<date>-<sha>`),
+and restarts the local `pai.service` if it runs from this tree — a running
+`next start` must not have `.next` swapped underneath it.
+
+**Consumer node (e.g. phone):** clone this repo once, `npm install` there
+once, then every update is:
+
+```sh
+~/pai/update-prebuilt.sh    # scripts/update-prebuilt.sh, copied to ~/pai
+```
+
+It fetches `/releases/latest`, swaps in `.next`, and restarts. Needs network
+access to github.com — set `http_proxy`/`https_proxy` if direct access is
+blocked (the script defaults to `http://192.168.10.130:7890` when unset).
+Boot-time startup on Android is a `~/.termux/boot/pai.sh` running
+`PI_WEB_NO_OPEN=1 PI_WEB_TITLE_SUFFIX=<node> node bin/pi-web.js` under
+`termux-wake-lock`.
+
+## Browser-tab node identification
+
+`PI_WEB_TITLE_SUFFIX` (read at request time via `/api/pai-title`, no rebuild
+needed) appends a suffix to the tab title, e.g. `会话名 - PAI@vm_wujie_1`, so
+several nodes open side by side stay distinguishable. Empty by default.
+
 ## License and attribution
 
 MIT, and a derivative work of **[pi-web](https://github.com/agegr/pi-web)** by **agegr**,
